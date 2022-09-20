@@ -44,9 +44,10 @@ class Wire(BasicPart):
         super().__init__()
         self.endpoint1 = endpoint1
         self.endpoint2 = endpoint2
-        self.attach_parallel_wire_endpoints()
-
         self.parallel_wires: List[Wire] = []
+
+        self.attach_parallel_wire_endpoints()
+        self.calculate_state()
 
     # Syntactic Sugar
     @property
@@ -152,4 +153,5 @@ class OutputPin(BasicPart):
     def push_state_change(self):
         # Picture this as a push notification to the connected wire, letting it know that the state of this pin has
         # changed, and it should update it's state accordingly
-        self.connected_wire.calculate_state()
+        if self.connected_wire is not None:
+            self.connected_wire.calculate_state()
