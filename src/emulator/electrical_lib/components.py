@@ -1,4 +1,4 @@
-from primitives import *
+from src.emulator.electrical_lib.primitives import *
 
 
 class PowerSource:
@@ -10,6 +10,7 @@ class PowerSource:
 class BaseGateClass:
     def __init__(self):
         self.output_pin = OutputPin(self)
+        self.update_output()
 
     def logic_func(self) -> bool:
         pass
@@ -21,8 +22,8 @@ class BaseGateClass:
 
 class NotGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return not self.input_pin
@@ -30,9 +31,9 @@ class NotGate(BaseGateClass):
 
 class OrGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin_1 = InputPin(self)
         self.input_pin_2 = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return self.input_pin_1.state or self.input_pin_2.state
@@ -40,9 +41,9 @@ class OrGate(BaseGateClass):
 
 class NorGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin_1 = InputPin(self)
         self.input_pin_2 = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return not (self.input_pin_1.state or self.input_pin_2.state)
@@ -50,9 +51,9 @@ class NorGate(BaseGateClass):
 
 class AndGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin_1 = InputPin(self)
         self.input_pin_2 = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return self.input_pin_1.state and self.input_pin_2.state
@@ -60,9 +61,9 @@ class AndGate(BaseGateClass):
 
 class NandGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin_1 = InputPin(self)
         self.input_pin_2 = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return not (self.input_pin_1.state and self.input_pin_2.state)
@@ -70,9 +71,9 @@ class NandGate(BaseGateClass):
 
 class XorGate(BaseGateClass):
     def __init__(self):
-        super().__init__()
         self.input_pin_1 = InputPin(self)
         self.input_pin_2 = InputPin(self)
+        super().__init__()
 
     def logic_func(self):
         return self.input_pin_1.state != self.input_pin_2.state

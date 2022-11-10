@@ -46,7 +46,7 @@ class Wire(BasicPart):
         self.endpoint2 = endpoint2
         self.parallel_wires: List[Wire] = []
 
-        self.attach_parallel_wire_endpoints()
+        self.bind_endpoints()
         self.calculate_state()
 
     # Syntactic Sugar
@@ -54,10 +54,12 @@ class Wire(BasicPart):
     def endpoints(self):
         return self.endpoint1, self.endpoint2
 
-    def attach_parallel_wire_endpoints(self):
+    def bind_endpoints(self):
         for endpoint in self.endpoints:
             if isinstance(endpoint, Wire):
                 endpoint.parallel_wires.append(self)
+            else:
+                endpoint.connected_wire = self
 
     def calculate_state(self) -> None:
         """
@@ -104,12 +106,12 @@ class Wire(BasicPart):
 
 
 class InputPin(BasicPart):
-    def __init__(self, parent_component, connected_wire: Wire = None):
+    def __init__(self, parent_component):
         """
         An input pin is the type of pin which will never have internal power from the component it is bound to. This
         implies that the state of this type of pin relies solely on the wire it is attached to.
 
-        :param connected_wire: A pin only has one wire connected to it. Pins can have multiple attached wires, but not
+        A pin only has one wire connected to it. Pins can have multiple attached wires, but not
         directly, they should be attached parallel to the main wire rather than being attached to the pin, since it
         makes no difference in terms of physics as far as we are concerned for this project, and makes the code a lot
         easier to write and understand.
@@ -119,7 +121,8 @@ class InputPin(BasicPart):
 
         super().__init__()
         self.parent_component = parent_component
-        self.connected_wire = connected_wire
+        self.connected_wire: Wire | None = None
+        self.x, self.y = 0, 0
 
         is_connected = self.connected_wire is not None
         if is_connected:
@@ -132,13 +135,13 @@ class InputPin(BasicPart):
 
 
 class OutputPin(BasicPart):
-    def __init__(self, parent_component, connected_wire: Wire = None):
+    def __init__(self, parent_component):
         """
         An OutputPin is the type of pin whose state is controlled by its parent component rather than the wire it is
         attached to. This implies that the state of this type of pin relies solely on the logic of the component it is
         attached to.
 
-        :param connected_wire: A pin only has one wire connected to it. Pins can have multiple attached wires, but not
+        A pin only has one wire connected to it. Pins can have multiple attached wires, but not
         directly, they should be attached parallel to the main wire rather than being attached to the pin, since it
         makes no difference in terms of physics as far as we are concerned for this project, and makes the code a lot
         easier to write and understand.
@@ -148,7 +151,8 @@ class OutputPin(BasicPart):
         super().__init__()
 
         self.parent_component = parent_component
-        self.connected_wire = connected_wire
+        self.connected_wire: Wire | None = None
+        self.x, self.y = 0, 0
 
     def push_state_change(self):
         # Picture this as a push notification to the connected wire, letting it know that the state of this pin has
